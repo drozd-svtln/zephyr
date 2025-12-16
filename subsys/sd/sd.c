@@ -242,6 +242,7 @@ int sd_init(const struct device *sdhc_dev, struct sd_card *card)
 	ret = sdhc_get_host_props(card->sdhc, &card->host_props);
 	if (ret) {
 		LOG_ERR("SD host controller returned invalid properties");
+		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
 
@@ -249,11 +250,13 @@ int sd_init(const struct device *sdhc_dev, struct sd_card *card)
 	ret = k_mutex_init(&card->lock);
 	if (ret) {
 		LOG_DBG("Could not init card mutex");
+		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
 	ret = k_mutex_lock(&card->lock, K_MSEC(CONFIG_SD_INIT_TIMEOUT));
 	if (ret) {
 		LOG_ERR("Timeout while trying to acquire card mutex");
+		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
 
@@ -261,6 +264,7 @@ int sd_init(const struct device *sdhc_dev, struct sd_card *card)
 	ret = sd_init_io(card);
 	if (ret) {
 		k_mutex_unlock(&card->lock);
+		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
 
@@ -284,18 +288,21 @@ int sd_init(const struct device *sdhc_dev, struct sd_card *card)
 		if (ret) {
 			LOG_ERR("Failed to reset SDHC I/O");
 			k_mutex_unlock(&card->lock);
+			printk("MY_LOG: %d %d\n", __LINE__, ret);
 			return ret;
 		}
 		ret = sd_command_init(card);
 		if (ret) {
 			LOG_ERR("Failed to init SD card after I/O reset");
 			k_mutex_unlock(&card->lock);
+			printk("MY_LOG: %d %d\n", __LINE__, ret);
 			return ret;
 		}
 	} else if (ret != 0) {
 		/* Initialization failed */
 		k_mutex_unlock(&card->lock);
 		card->status = CARD_ERROR;
+		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
 	/* Card initialization succeeded. */
@@ -304,8 +311,10 @@ int sd_init(const struct device *sdhc_dev, struct sd_card *card)
 	ret = k_mutex_unlock(&card->lock);
 	if (ret) {
 		LOG_DBG("Could not unlock card mutex");
+		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
+	printk("MY_LOG: %d %d\n", __LINE__, ret);
 	return ret;
 }
 
