@@ -40,12 +40,14 @@ struct disk_info *disk_access_get_di(const char *name)
 		 * name is shorter than the mount point name.
 		 */
 		if (strlen(itr->name) != name_len) {
+			LOG_ERR("MY_LOG: %s %d", name, __LINE__);
 			continue;
 		}
 
 		/* Check for disk name match */
 		if (strncmp(name, itr->name, name_len) == 0) {
 			disk = itr;
+			LOG_ERR("MY_LOG: %s %d", name, __LINE__);
 			break;
 		}
 	}
@@ -59,9 +61,12 @@ int disk_access_init(const char *pdrv)
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
 
+	LOG_ERR("MY_LOG: disk->name %s", disk->name);
+
 	if ((disk != NULL) && (disk->refcnt == 0U)) {
 		/* Disk has not been initialized, start it */
 		if ((disk->ops != NULL) && (disk->ops->init != NULL)) {
+			LOG_ERR("MY_LOG: disk->ops->init %p", disk->ops->init);
 			rc = disk->ops->init(disk);
 			if (rc == 0) {
 				/* Increment reference count */
