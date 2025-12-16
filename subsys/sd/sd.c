@@ -200,6 +200,7 @@ static int sd_command_init(struct sd_card *card)
 	 * specification and expect something like this too.
 	 */
 	ret = sd_common_init(card);
+	printk("MY_LOG: %s %d %d\n", __FILE__, __LINE__, ret);
 	if (ret) {
 		return ret;
 	}
