@@ -45,6 +45,7 @@ static int disk_sdmmc_access_init(struct disk_info *disk)
 	ret = sd_init(cfg->host_controller, &data->card);
 	if (ret) {
 		data->status = SD_ERROR;
+		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
 	data->status = SD_OK;
