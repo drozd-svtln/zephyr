@@ -566,7 +566,7 @@ static int sdmmc_init_uhs(struct sd_card *card)
 		/* SDR104, SDR50, and DDR50 mode need tuning */
 		ret = sdhc_execute_tuning(card->sdhc);
 		if (ret) {
-			LOG_ERR("SD tuning failed: %d", ret);
+			LOG_ERR("SD tuning failed: %d %s", ret, __FILE__);
 		}
 	}
 	return ret;
