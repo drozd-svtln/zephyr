@@ -437,6 +437,7 @@ static int sdmmc_set_current_limit(struct sd_card *card)
 		   (card->switch_caps.sd_current_limit & SD_MAX_CURRENT_200MA)) {
 		max_current = SD_SET_CURRENT_200MA;
 	}
+	LOG_ERR("MY_LOG Changing SD current limit: %d", max_current);
 	if (max_current != -1) {
 		LOG_DBG("Changing SD current limit: %d", max_current);
 		/* Switch SD current */
@@ -516,6 +517,8 @@ static int sdmmc_set_bus_speed(struct sd_card *card)
 		LOG_WRN("Card did not accept new speed");
 	} else {
 		/* Change host bus speed */
+		LOG_ERR("MY_LOG Changing timing: %d", timing);
+		LOG_ERR("MY_LOG Changing card_clock: %d", card_clock);
 		card->bus_io.timing = timing;
 		card->bus_io.clock = card_clock;
 		LOG_DBG("Setting bus clock to: %d", card->bus_io.clock);
@@ -535,6 +538,10 @@ static int sdmmc_init_uhs(struct sd_card *card)
 {
 	int ret;
 
+	LOG_ERR("MY_LOG error");
+	LOG_WRN("MY_LOG warn");
+	LOG_DBG("MY_LOG dbg");
+
 	/* Raise bus width to 4 bits */
 	ret = sdmmc_set_bus_width(card, SDHC_BUS_WIDTH4BIT);
 	if (ret) {
@@ -547,6 +554,7 @@ static int sdmmc_init_uhs(struct sd_card *card)
 	LOG_ERR("MY_LOG card->card_speed: %d", card->card_speed);
 	/* Now, set the driver strength for the card */
 	ret = sdmmc_select_driver_type(card);
+	LOG_ERR("MY_LOG card->bus_io.driver_type: %d", card->bus_io.driver_type);
 	if (ret) {
 		LOG_DBG("Failed to select new driver type");
 		return ret;
