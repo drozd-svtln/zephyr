@@ -544,6 +544,7 @@ static int sdmmc_init_uhs(struct sd_card *card)
 
 	/* Select bus speed for card depending on host and card capability*/
 	sdmmc_select_bus_speed(card);
+	LOG_ERR("MY_LOG card->card_speed: %d", card->card_speed);
 	/* Now, set the driver strength for the card */
 	ret = sdmmc_select_driver_type(card);
 	if (ret) {
@@ -561,6 +562,9 @@ static int sdmmc_init_uhs(struct sd_card *card)
 		LOG_DBG("Failed to set card bus speed");
 		return ret;
 	}
+
+	LOG_ERR("MY_LOG card->card_speed: %d", card->card_speed);
+
 	if (card->card_speed == SD_TIMING_SDR50 || card->card_speed == SD_TIMING_SDR104 ||
 	    card->card_speed == SD_TIMING_DDR50) {
 		/* SDR104, SDR50, and DDR50 mode need tuning */
