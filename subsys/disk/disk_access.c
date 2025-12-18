@@ -31,6 +31,8 @@ struct disk_info *disk_access_get_di(const char *name)
 	sys_dnode_t *node;
 	k_spinlock_key_t spinlock_key = k_spin_lock(&lock);
 
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+
 	SYS_DLIST_FOR_EACH_NODE(&disk_access_list, node) {
 		itr = CONTAINER_OF(node, struct disk_info, node);
 
@@ -53,6 +55,8 @@ struct disk_info *disk_access_get_di(const char *name)
 	}
 	k_spin_unlock(&lock, spinlock_key);
 
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+
 	return disk;
 }
 
@@ -60,6 +64,8 @@ int disk_access_init(const char *pdrv)
 {
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
+
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	LOG_ERR("MY_LOG: disk->name %s", disk->name);
 
@@ -78,6 +84,8 @@ int disk_access_init(const char *pdrv)
 		disk->refcnt++;
 		rc = 0;
 	}
+
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	return rc;
 }
