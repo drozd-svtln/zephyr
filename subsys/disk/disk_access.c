@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <zephyr/device.h>
 
+#include <linux/module.h>
 #include <linux/kernel.h>
 
 #define LOG_LEVEL CONFIG_DISK_LOG_LEVEL
