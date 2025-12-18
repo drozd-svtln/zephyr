@@ -77,12 +77,14 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 
 	switch (cmd) {
 	case CTRL_SYNC:
+		LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 		if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_CTRL_SYNC, buff) != 0) {
 			ret = RES_ERROR;
 		}
 		break;
 
 	case GET_SECTOR_COUNT:
+		LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 		if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_GET_SECTOR_COUNT, buff) !=
 		    0) {
 			ret = RES_ERROR;
@@ -94,6 +96,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 		 * 32-bit number while FatFS's GET_SECTOR_SIZE is supposed to
 		 * return a 16-bit number.
 		 */
+		LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 		if ((disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_GET_SECTOR_SIZE,
 				       &sector_size) == 0) &&
 		    (sector_size == (uint16_t)sector_size)) {
@@ -104,6 +107,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 		break;
 
 	case GET_BLOCK_SIZE:
+		LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 		if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_GET_ERASE_BLOCK_SZ, buff) !=
 		    0) {
 			ret = RES_ERROR;
@@ -116,12 +120,14 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 	case CTRL_POWER:
 		if (((*(uint8_t *)buff)) == DISK_IOCTL_POWER_OFF) {
 			/* Power disk off */
+			LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 			if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_CTRL_DEINIT, NULL) !=
 			    0) {
 				ret = RES_ERROR;
 			}
 		} else {
 			/* Power disk on */
+			LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 			if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_CTRL_INIT, NULL) !=
 			    0) {
 				ret = STA_NOINIT;
