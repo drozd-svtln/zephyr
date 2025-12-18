@@ -366,6 +366,12 @@ static inline void sdmmc_select_bus_speed(struct sd_card *card)
 	 * Note that function support is defined using bitfields, but function
 	 * selection is defined using values 0x0-0xF.
 	 */
+	LOG_ERR("MY_LOG card->host_props.host_caps.sdr104_support %d", card->host_props.host_caps.sdr104_support ? 1 : 0);
+	LOG_ERR("MY_LOG card->host_props.host_caps.ddr50_support %d", card->host_props.host_caps.ddr50_support ? 1 : 0);
+	LOG_ERR("MY_LOG card->host_props.host_caps.sdr50_support %d", card->host_props.host_caps.sdr50_support ? 1 : 0);
+	LOG_ERR("MY_LOG card->host_props.host_caps.high_spd_support %d", card->host_props.host_caps.high_spd_support ? 1 : 0);
+	LOG_ERR("MY_LOG card->switch_caps.bus_speed %d", card->switch_caps.bus_speed);
+	LOG_ERR("MY_LOG card->host_props.f_max %d", card->host_props.f_max);
 	if ((card->flags & SD_1800MV_FLAG) && sdmmc_host_uhs(&card->host_props) &&
 	    !(card->host_props.is_spi) && IS_ENABLED(CONFIG_SD_UHS_PROTOCOL)) {
 		/* Select UHS mode timing */
