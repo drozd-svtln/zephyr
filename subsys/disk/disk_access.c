@@ -26,7 +26,6 @@ static struct k_spinlock lock;
 
 struct disk_info *disk_access_get_di(const char *name)
 {
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = NULL, *itr;
 	size_t name_len = strlen(name);
 	sys_dnode_t *node;
