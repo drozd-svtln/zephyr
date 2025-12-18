@@ -130,7 +130,7 @@ static int bcm2712_sdhci_set_io(const struct device *dev, struct sdhc_io *ios)
 	struct sdhc_io *host_io = &data->host_io;
 	int ret;
 
-	LOG_DEV_DBG(dev,
+	LOG_DEV_ERR(dev,
 		    "set_io: bus_width:%d clock:%dHz power:%d timing:%d, voltage:%d drv:%d",
 		    ios->bus_width, ios->clock, ios->power_mode,
 		    ios->timing, ios->signal_voltage, ios->driver_type);
