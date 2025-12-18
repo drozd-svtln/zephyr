@@ -62,6 +62,7 @@ struct disk_info *disk_access_get_di(const char *name)
 
 int disk_access_init(const char *pdrv)
 {
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
 
@@ -92,8 +93,10 @@ int disk_access_init(const char *pdrv)
 
 int disk_access_status(const char *pdrv)
 {
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	if ((disk != NULL) && (disk->ops != NULL) &&
 				(disk->ops->status != NULL)) {
@@ -106,8 +109,10 @@ int disk_access_status(const char *pdrv)
 int disk_access_read(const char *pdrv, uint8_t *data_buf,
 		     uint32_t start_sector, uint32_t num_sector)
 {
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	if ((disk != NULL) && (disk->ops != NULL) &&
 				(disk->ops->read != NULL)) {
@@ -120,8 +125,10 @@ int disk_access_read(const char *pdrv, uint8_t *data_buf,
 int disk_access_write(const char *pdrv, const uint8_t *data_buf,
 		      uint32_t start_sector, uint32_t num_sector)
 {
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	if ((disk != NULL) && (disk->ops != NULL) &&
 				(disk->ops->write != NULL)) {
@@ -133,8 +140,10 @@ int disk_access_write(const char *pdrv, const uint8_t *data_buf,
 
 int disk_access_ioctl(const char *pdrv, uint8_t cmd, void *buf)
 {
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	if ((disk != NULL) && (disk->ops != NULL) &&
 				(disk->ops->ioctl != NULL)) {
@@ -187,10 +196,14 @@ int disk_access_register(struct disk_info *disk)
 		return -EINVAL;
 	}
 
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+
 	if (disk_access_get_di(disk->name) != NULL) {
 		LOG_ERR("disk interface already registered!!");
+		LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 		return -EINVAL;
 	}
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	/* Initialize reference count to zero */
 	disk->refcnt = 0U;
@@ -212,10 +225,13 @@ int disk_access_unregister(struct disk_info *disk)
 		return -EINVAL;
 	}
 
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+
 	if (disk_access_get_di(disk->name) == NULL) {
 		LOG_ERR("disk interface not registered!!");
 		return -EINVAL;
 	}
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	spinlock_key = k_spin_lock(&lock);
 	/* remove disk node from the list */
