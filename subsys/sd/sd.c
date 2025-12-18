@@ -315,6 +315,7 @@ int sd_init(const struct device *sdhc_dev, struct sd_card *card)
 		printk("MY_LOG: %d %d\n", __LINE__, ret);
 		return ret;
 	}
+	printk("MY_LOG card->status %d\n", card->status);
 	printk("MY_LOG: %d %d\n", __LINE__, ret);
 	return ret;
 }
