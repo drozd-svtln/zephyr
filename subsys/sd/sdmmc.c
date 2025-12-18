@@ -378,6 +378,10 @@ static inline void sdmmc_select_bus_speed(struct sd_card *card)
 		if (card->host_props.host_caps.sdr104_support &&
 		    (card->switch_caps.bus_speed & UHS_SDR104_BUS_SPEED)) {
 			card->card_speed = SD_TIMING_SDR104;
+
+			LOG_ERR("MY_LOG %d", __LINE__);
+			LOG_ERR("MY_LOG %d", (int)card->switch_caps.bus_speed & UHS_SDR104_BUS_SPEED);
+			LOG_ERR("MY_LOG %d", (int)card->host_props.host_caps.sdr104_support);
 		} else if (card->host_props.host_caps.ddr50_support &&
 			   (card->switch_caps.bus_speed & UHS_DDR50_BUS_SPEED)) {
 			card->card_speed = SD_TIMING_DDR50;
