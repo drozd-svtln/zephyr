@@ -29,6 +29,7 @@ struct disk_info *disk_access_get_di(const char *name)
 	struct disk_info *disk = NULL, *itr;
 	size_t name_len = strlen(name);
 	sys_dnode_t *node;
+	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	k_spinlock_key_t spinlock_key = k_spin_lock(&lock);
 
 	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
