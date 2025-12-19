@@ -147,6 +147,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 			
 			if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_CTRL_INIT, NULL) !=
 			    0) {
+				printk("MY LOG disk_access_ioctl ret != 0\n");
 				ret = STA_NOINIT;
 			}
 		}
