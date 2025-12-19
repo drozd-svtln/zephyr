@@ -142,7 +142,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 			printk("MY LOG #ifdef FF_VOLUME_STRS\n");
 			#endif
 			#ifdef FF_STR_VOLUME_ID
-			printk("MY LOG #ifdef FF_STR_VOLUME_ID\n");
+			printk("MY LOG #ifdef FF_STR_VOLUME_ID %d\n", FF_STR_VOLUME_ID);
 			#endif
 			
 			if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_CTRL_INIT, NULL) !=

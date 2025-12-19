@@ -99,7 +99,7 @@
 
 /* Zephyr uses FF_VOLUME_STRS */
 #undef FF_STR_VOLUME_ID
-#define FF_STR_VOLUME_ID 1
+#define FF_STR_VOLUME_ID 6
 
 /* By default FF_STR_VOLUME_ID in ffconf.h is 0, which means that
  * FF_VOLUME_STRS is not used. Zephyr uses FF_VOLUME_STRS.
