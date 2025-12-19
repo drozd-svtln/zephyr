@@ -448,6 +448,8 @@ static int fatfs_mount(struct fs_mount_t *mountp)
 {
 	FRESULT res;
 
+	LOG_ERR("MY_LOG file %s %d", __FILE__, __LINE__);
+
 	res = f_mount((FATFS *)mountp->fs_data, translate_path(mountp->mnt_point), 1);
 
 #if defined(CONFIG_FS_FATFS_MOUNT_MKFS)
@@ -474,6 +476,8 @@ static int fatfs_mount(struct fs_mount_t *mountp)
 		}
 	}
 #endif /* CONFIG_FS_FATFS_MOUNT_MKFS */
+
+	LOG_ERR("MY_LOG res %d file %s %d", res, __FILE__, __LINE__);
 
 	if (res == FR_OK) {
 		mountp->flags |= FS_MOUNT_FLAG_USE_DISK_ACCESS;
