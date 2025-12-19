@@ -29,13 +29,13 @@ struct disk_info *disk_access_get_di(const char *name)
 	struct disk_info *disk = NULL, *itr;
 	size_t name_len = strlen(name);
 	sys_dnode_t *node;
-	LOG_ERR("MY_LOG name %s %s %d", name, __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG name %s %s %d", name, __FILE__, __LINE__);
 	k_spinlock_key_t spinlock_key = k_spin_lock(&lock);
 
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	SYS_DLIST_FOR_EACH_NODE(&disk_access_list, node) {
-		LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+		// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 		itr = CONTAINER_OF(node, struct disk_info, node);
 
 		/*
@@ -44,21 +44,21 @@ struct disk_info *disk_access_get_di(const char *name)
 		 * name is shorter than the mount point name.
 		 */
 		if (strlen(itr->name) != name_len) {
-			LOG_ERR("MY_LOG name %s", name);
-			LOG_ERR("MY_LOG itr->name %s", itr->name);
+			// LOG_ERR("MY_LOG name %s", name);
+			// LOG_ERR("MY_LOG itr->name %s", itr->name);
 			continue;
 		}
 
 		/* Check for disk name match */
 		if (strncmp(name, itr->name, name_len) == 0) {
 			disk = itr;
-			LOG_ERR("MY_LOG: %s %d", name, __LINE__);
+			// LOG_ERR("MY_LOG: %s %d", name, __LINE__);
 			break;
 		}
 	}
 	k_spin_unlock(&lock, spinlock_key);
 
-	LOG_ERR("MY_LOG disk %p %s %d", disk, __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG disk %p %s %d", disk, __FILE__, __LINE__);s
 
 	return disk;
 }
@@ -96,10 +96,10 @@ int disk_access_init(const char *pdrv)
 
 int disk_access_status(const char *pdrv)
 {
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	if ((disk != NULL) && (disk->ops != NULL) &&
 				(disk->ops->status != NULL)) {
@@ -112,10 +112,10 @@ int disk_access_status(const char *pdrv)
 int disk_access_read(const char *pdrv, uint8_t *data_buf,
 		     uint32_t start_sector, uint32_t num_sector)
 {
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	if ((disk != NULL) && (disk->ops != NULL) &&
 				(disk->ops->read != NULL)) {
@@ -128,10 +128,10 @@ int disk_access_read(const char *pdrv, uint8_t *data_buf,
 int disk_access_write(const char *pdrv, const uint8_t *data_buf,
 		      uint32_t start_sector, uint32_t num_sector)
 {
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	// LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	if ((disk != NULL) && (disk->ops != NULL) &&
 				(disk->ops->write != NULL)) {
