@@ -450,6 +450,13 @@ static int fatfs_mount(struct fs_mount_t *mountp)
 
 	LOG_ERR("MY_LOG file %s %d", __FILE__, __LINE__);
 
+	FATFS *my_struct = (FATFS *)mountp->fs_data;
+
+	LOG_ERR("MY_LOG %*ph", (int)sizeof(*my_struct), my_struct);
+	// LOG_ERR("MY_LOG ");
+	// LOG_ERR("MY_LOG ");
+	
+
 	res = f_mount((FATFS *)mountp->fs_data, translate_path(mountp->mnt_point), 1);
 
 #if defined(CONFIG_FS_FATFS_MOUNT_MKFS)
