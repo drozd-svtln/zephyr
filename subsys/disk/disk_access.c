@@ -109,6 +109,7 @@ int disk_access_write(const char *pdrv, const uint8_t *data_buf,
 
 int disk_access_ioctl(const char *pdrv, uint8_t cmd, void *buf)
 {
+	LOG_ERR("MY_LOG %s %d pdrv %s", __FILE__, __LINE__, pdrv);
 	struct disk_info *disk = disk_access_get_di(pdrv);
 	int rc = -EINVAL;
 
