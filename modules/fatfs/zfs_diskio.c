@@ -135,6 +135,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 			#ifdef FF_STR_VOLUME_ID
 			printk("MY LOG #ifdef FF_STR_VOLUME_ID\n");
 			#endif
+			
 			if (disk_access_ioctl(PDRV_STR_ARRAY[pdrv], DISK_IOCTL_CTRL_INIT, NULL) !=
 			    0) {
 				ret = STA_NOINIT;
