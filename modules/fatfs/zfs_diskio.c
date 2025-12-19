@@ -18,10 +18,8 @@
 
 #if CONFIG_FS_FATFS_CUSTOM_MOUNT_POINT_COUNT
 #define PDRV_STR_ARRAY VolumeStr
-#warning "PDRV_STR_ARRAY VolumeStr"
 #else
 static const char *const pdrv_str[] = {FF_VOLUME_STRS};
-#warning "pdrv_str[] = {FF_VOLUME_STRS};"
 #define PDRV_STR_ARRAY pdrv_str
 #endif /* CONFIG_FS_FATFS_CUSTOM_MOUNT_POINT_COUNT */
 
@@ -139,7 +137,11 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 			printk("MY_LOG PDRV_STR_ARRAY[1] %s\n", PDRV_STR_ARRAY[1]);
 			printk("MY_LOG PDRV_STR_ARRAY[2] %s\n", PDRV_STR_ARRAY[2]);
 			printk("MY_LOG PDRV_STR_ARRAY[3] %s\n\n", PDRV_STR_ARRAY[3]);
-			
+
+			# ifdef FF_VOLUMES 
+			printk("MY_LOG FF_VOLUMES %s\n", FF_VOLUMES);
+			#endif
+
 			#ifdef FF_VOLUME_STRS
 			printk("MY LOG #ifdef FF_VOLUME_STRS\n");
 			#endif
