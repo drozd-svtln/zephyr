@@ -424,6 +424,17 @@ static int fatfs_statvfs(struct fs_mount_t *mountp,
 static int fatfs_mount(struct fs_mount_t *mountp)
 {
 	FRESULT res;
+	
+	printk("MY_LOG file %s %d\n", __FILE__, __LINE__);
+
+	FATFS *my_struct = (FATFS *)mountp->fs_data;
+
+	printk("MY_LOG %*ph\n", (int)sizeof(*my_struct), my_struct);
+	printk("MY_LOG my_struct->fs_type %d\n", my_struct->fs_type);
+	printk("MY_LOG my_struct->pdrv %d\n", my_struct->pdrv);
+	printk("MY_LOG my_struct->ldrv %d\n", my_struct->ldrv);
+	printk("MY_LOG my_struct->n_fats %d\n", my_struct->n_fats);
+	printk("MY_LOG %p\n", mountp->fs_data);
 
 	res = f_mount((FATFS *)mountp->fs_data, translate_path(mountp->mnt_point), 1);
 
