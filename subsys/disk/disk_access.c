@@ -29,12 +29,13 @@ struct disk_info *disk_access_get_di(const char *name)
 	struct disk_info *disk = NULL, *itr;
 	size_t name_len = strlen(name);
 	sys_dnode_t *node;
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	LOG_ERR("MY_LOG name %s %s %d", name, __FILE__, __LINE__);
 	k_spinlock_key_t spinlock_key = k_spin_lock(&lock);
 
 	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 
 	SYS_DLIST_FOR_EACH_NODE(&disk_access_list, node) {
+		LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 		itr = CONTAINER_OF(node, struct disk_info, node);
 
 		/*
