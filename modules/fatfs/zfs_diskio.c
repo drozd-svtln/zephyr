@@ -18,8 +18,10 @@
 
 #if CONFIG_FS_FATFS_CUSTOM_MOUNT_POINT_COUNT
 #define PDRV_STR_ARRAY VolumeStr
+#warning "PDRV_STR_ARRAY VolumeStr"
 #else
 static const char *const pdrv_str[] = {FF_VOLUME_STRS};
+#warning "pdrv_str[] = {FF_VOLUME_STRS};"
 #define PDRV_STR_ARRAY pdrv_str
 #endif /* CONFIG_FS_FATFS_CUSTOM_MOUNT_POINT_COUNT */
 
