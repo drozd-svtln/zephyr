@@ -314,6 +314,8 @@ static int bcm2712_sdhci_init_host_props(const struct device *dev)
 		LOG_DEV_INF(dev, "vdd vol_180 is not supported, drop sdr104, sdr50, ddr50 support");
 	}
 
+	host_caps->sdr104_support = 0; // MY FIX
+
 	if (host_caps->bus_8_bit_support && !cfg->bw_8bit) {
 		LOG_DEV_INF(dev, "bus_8_bit_support not supported");
 		host_caps->bus_8_bit_support = 0;
