@@ -139,7 +139,7 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 			printk("MY_LOG PDRV_STR_ARRAY[3] %s\n\n", PDRV_STR_ARRAY[3]);
 
 			# ifdef FF_VOLUMES 
-			printk("MY_LOG FF_VOLUMES %s\n", FF_VOLUMES);
+			printk("MY_LOG FF_VOLUMES %d\n", FF_VOLUMES);
 			#endif
 
 			#ifdef FF_VOLUME_STRS
