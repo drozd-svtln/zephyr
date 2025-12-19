@@ -56,7 +56,7 @@ struct disk_info *disk_access_get_di(const char *name)
 	}
 	k_spin_unlock(&lock, spinlock_key);
 
-	LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
+	LOG_ERR("MY_LOG disk->name %s %s %d", disk->name, __FILE__, __LINE__);
 
 	return disk;
 }
@@ -152,12 +152,16 @@ int disk_access_ioctl(const char *pdrv, uint8_t cmd, void *buf)
 				(disk->ops->ioctl != NULL)) {
 		switch (cmd) {
 		case DISK_IOCTL_CTRL_INIT:
+			LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 			if (disk->refcnt == 0U) {
 				rc = disk->ops->ioctl(disk, cmd, buf);
+				LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 				if (rc == 0) {
+					LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 					disk->refcnt++;
 				}
 			} else if (disk->refcnt < UINT16_MAX) {
+				LOG_ERR("MY_LOG %s %d", __FILE__, __LINE__);
 				disk->refcnt++;
 				rc = 0;
 			} else {
@@ -187,6 +191,7 @@ int disk_access_ioctl(const char *pdrv, uint8_t cmd, void *buf)
 		}
 	}
 
+	LOG_ERR("MY_LOG rc = %d %s %d", rc, __FILE__, __LINE__);
 	return rc;
 }
 
