@@ -731,6 +731,8 @@ int fs_mount(struct fs_mount_t *mp)
 			mp->mnt_point);
 	}
 
+	LOG_ERR("MY_LOG fs->mount %p", fs->mount);
+
 	rc = fs->mount(mp);
 	if (rc < 0) {
 		LOG_ERR("fs mount error (%d)", rc);
