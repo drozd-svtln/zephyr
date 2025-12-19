@@ -56,7 +56,7 @@ struct disk_info *disk_access_get_di(const char *name)
 	}
 	k_spin_unlock(&lock, spinlock_key);
 
-	LOG_ERR("MY_LOG disk->name %s %s %d", disk->name, __FILE__, __LINE__);
+	LOG_ERR("MY_LOG disk %p %s %d", disk, __FILE__, __LINE__);
 
 	return disk;
 }
