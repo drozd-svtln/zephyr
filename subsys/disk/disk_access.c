@@ -44,7 +44,8 @@ struct disk_info *disk_access_get_di(const char *name)
 		 * name is shorter than the mount point name.
 		 */
 		if (strlen(itr->name) != name_len) {
-			LOG_ERR("MY_LOG: %s %d", name, __LINE__);
+			LOG_ERR("MY_LOG name %s", name);
+			LOG_ERR("MY_LOG itr->name %s", itr->name);
 			continue;
 		}
 
