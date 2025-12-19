@@ -453,7 +453,8 @@ static int fatfs_mount(struct fs_mount_t *mountp)
 	FATFS *my_struct = (FATFS *)mountp->fs_data;
 
 	LOG_ERR("MY_LOG %*ph", (int)sizeof(*my_struct), my_struct);
-	LOG_ERR("MY_LOG %p", (FATFS *)mountp->fs_data);
+	LOG_ERR("MY_LOG my_struct->fs_type %d", my_struct->fs_type);
+	LOG_ERR("MY_LOG my_struct->pdrv %d", my_struct->pdrv);
 	LOG_ERR("MY_LOG %p", mountp->fs_data);
 	// LOG_ERR("MY_LOG ");
 	// LOG_ERR("MY_LOG ");
