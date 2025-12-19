@@ -127,8 +127,17 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
 			}
 		} else {
 			/* Power disk on */
-			printk("MY_LOG %s %d PDRV_STR_ARRAY[pdrv] %s pdrv %d\n", __FILE__, __LINE__, PDRV_STR_ARRAY[pdrv], pdrv);
+			printk("MY_LOG %s %d PDRV_STR_ARRAY[pdrv] %s pdrv %d\n\n", __FILE__, __LINE__, PDRV_STR_ARRAY[pdrv], pdrv);
 			printk("MY_LOG VolumeStr[0] %s\n", VolumeStr[0]);
+			printk("MY_LOG VolumeStr[1] %s\n", VolumeStr[1]);
+			printk("MY_LOG VolumeStr[2] %s\n", VolumeStr[2]);
+			printk("MY_LOG VolumeStr[3] %s\n\n", VolumeStr[3]);
+
+			printk("MY_LOG PDRV_STR_ARRAY[0] %s\n", PDRV_STR_ARRAY[0]);
+			printk("MY_LOG PDRV_STR_ARRAY[1] %s\n", PDRV_STR_ARRAY[1]);
+			printk("MY_LOG PDRV_STR_ARRAY[2] %s\n", PDRV_STR_ARRAY[2]);
+			printk("MY_LOG PDRV_STR_ARRAY[3] %s\n\n", PDRV_STR_ARRAY[3]);
+			
 			#ifdef FF_VOLUME_STRS
 			printk("MY LOG #ifdef FF_VOLUME_STRS\n");
 			#endif
