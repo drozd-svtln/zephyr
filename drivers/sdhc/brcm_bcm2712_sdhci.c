@@ -313,6 +313,11 @@ static int bcm2712_sdhci_init_host_props(const struct device *dev)
 		host_caps->ddr50_support = 0;
 		LOG_DEV_INF(dev, "vdd vol_180 is not supported, drop sdr104, sdr50, ddr50 support");
 	}
+	/*
+	 * The workaround to disable SRD104 support as tuning for SDR104 mode is in
+	 * the TODO state of development
+	 */
+	host_caps->sdr104_support = 0;
 
 	if (host_caps->bus_8_bit_support && !cfg->bw_8bit) {
 		LOG_DEV_INF(dev, "bus_8_bit_support not supported");

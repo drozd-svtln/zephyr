@@ -352,6 +352,11 @@ static int sdmmc_read_switch(struct sd_card *card)
 	} else {
 		card->switch_caps.uhs_max_dtr = UHS_UNSUPPORTED;
 	}
+	/*
+	 * The workaround to choose the proper UHS speed as tuning for SDR104 mode
+	 * is in the TODO state of development
+	 */
+	card->switch_caps.uhs_max_dtr = UHS_DDR50_MAX_DTR;
 	if (card->sd_version >= SD_SPEC_VER3_0) {
 		card->switch_caps.bus_speed = status[13];
 		card->switch_caps.sd_drv_type = status[9];
