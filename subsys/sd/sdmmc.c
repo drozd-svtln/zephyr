@@ -352,7 +352,7 @@ static int sdmmc_read_switch(struct sd_card *card)
 	} else {
 		card->switch_caps.uhs_max_dtr = UHS_UNSUPPORTED;
 	}
-	card->switch_caps.uhs_max_dtr = UHS_DDR50_MAX_DTR;
+	// card->switch_caps.uhs_max_dtr = UHS_DDR50_MAX_DTR;
 	if (card->sd_version >= SD_SPEC_VER3_0) {
 		card->switch_caps.bus_speed = status[13];
 		card->switch_caps.sd_drv_type = status[9];
@@ -494,7 +494,7 @@ static int sdmmc_set_bus_speed(struct sd_card *card)
 	} else {
 		/* High speed/default mode */
 		card_clock = MIN(card->host_props.f_max, card->switch_caps.hs_max_dtr);
-		card_clock = 50000000;
+		// card_clock = 50000000;
 		switch (card->card_speed) {
 		case SD_TIMING_HIGH_SPEED:
 			timing = SDHC_TIMING_HS;

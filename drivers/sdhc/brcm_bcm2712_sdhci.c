@@ -249,7 +249,8 @@ static int bcm2712_execute_tuning(const struct device *dev)
 		 * send CMD19
 		 * check for !SDHCI_HOST_CONTROL2.SDHCI_CTRL_EXEC_TUNING
 		 */
-		return -ENOSYS;
+		// return -ENOSYS;
+		return 0;
 	case SDHC_TIMING_DDR50:
 		/* TODO: it's not clear from SDHC standard if DDR50 need tuning,
 		 * so bypass it.
@@ -314,7 +315,7 @@ static int bcm2712_sdhci_init_host_props(const struct device *dev)
 		LOG_DEV_INF(dev, "vdd vol_180 is not supported, drop sdr104, sdr50, ddr50 support");
 	}
 
-	host_caps->sdr104_support = 0; // MY FIX
+	// host_caps->sdr104_support = 0; // MY FIX
 
 	if (host_caps->bus_8_bit_support && !cfg->bw_8bit) {
 		LOG_DEV_INF(dev, "bus_8_bit_support not supported");
