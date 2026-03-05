@@ -123,6 +123,7 @@ static int scmi_smc_setup_chan(const struct device *transport, struct scmi_chann
 	}
 
 	/* SMC/HVC calls are synchronous and so doesn't support interrupts. */
+	chan->polling_only = true;
 
 	LOG_DBG("SMC channel setup complete (polling mode)");
 
