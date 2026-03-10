@@ -137,4 +137,4 @@ static struct scmi_transport_api scmi_smc_api = {
 	.channel_is_free = scmi_smc_channel_is_free,
 };
 
-DT_INST_SCMI_SMC_DEFINE(0, PRE_KERNEL_1, CONFIG_ARM_SCMI_TRANSPORT_INIT_PRIORITY, &scmi_smc_api);
+DT_INST_SCMI_SMC_DEFINE(0, POST_KERNEL, CONFIG_ARM_SCMI_TRANSPORT_INIT_PRIORITY, &scmi_smc_api);
