@@ -19,6 +19,27 @@ struct clk_info {
 	char parent_name[SCMI_CLK_NAME_LEN];
 };
 
+// #ifdef CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS
+// extern struct scmi_channel SCMI_TRANSPORT_CHAN_NAME(SCMI_PROTOCOL_CLOCK, 0);
+// // struct scmi_channel SCMI_TRANSPORT_CHAN_NAME(SCMI_PROTOCOL_CLOCK, 0) = 
+// // 	SCMI_SMC_CHAN_DEFINE(DT_INST(0, arm_scmi_smc), SCMI_PROTOCOL_CLOCK, 0);
+// #endif /* CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS */
+
+// STRUCT_SECTION_ITERABLE(scmi_protocol, SCMI_PROTOCOL_NAME(SCMI_PROTOCOL_CLOCK)) = { 
+// 	.id = SCMI_PROTOCOL_CLOCK,
+// #ifdef CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS
+// 	.tx = &SCMI_TRANSPORT_CHAN_NAME(SCMI_PROTOCOL_CLOCK, 0),
+// #endif /* CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS */
+// 	.data = NULL,
+// };
+
+// #ifdef CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS
+// DT_SCMI_PROTOCOL_DEFINE_NODEV(DT_INST(0, arm_scmi_clock), NULL,
+// 		SCMI_CLK_PROTOCOL_SUPPORTED_VERSION);
+// #endif /* CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS */
+
+
+
 SCMI_PROTOCOL_DECLARE(SCMI_PROTOCOL_CLOCK);
 static struct scmi_protocol *_proto = &SCMI_PROTOCOL_NAME(SCMI_PROTOCOL_CLOCK);
 
@@ -90,6 +111,8 @@ static int cmd_clk_version(const struct shell *sh, size_t argc, char **argv)
 {
 	uint32_t version;
 	int ret;
+
+	shell_print(sh, "MY_DEBUG, _proto.version %d", _proto->version);
 
 	ret = scmi_protocol_get_version(_proto, &version);
 	if (ret) {

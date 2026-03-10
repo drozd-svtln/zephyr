@@ -16,6 +16,7 @@
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
 
+
 /**
  * @brief SCMI Transport Layer abstraction and definitions
  * @defgroup scmi_transport Transport
@@ -228,12 +229,17 @@ scmi_transport_request_channel(const struct device *transport,
  */
 static inline int scmi_transport_init(const struct device *transport)
 {
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 	const struct scmi_transport_api *api =
 		(const struct scmi_transport_api *)transport->api;
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	if (api->init) {
 		return api->init(transport);
 	}
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	return 0;
 }
@@ -263,12 +269,21 @@ static inline int scmi_transport_send_message(const struct device *transport,
 					      struct scmi_message *msg,
 					      bool use_polling)
 {
+	if (!transport) {
+		printk("MY_DEBUG: transport is empty %d\n", __LINE__);
+	}
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 	const struct scmi_transport_api *api =
 		(const struct scmi_transport_api *)transport->api;
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 	if (!api || !api->send_message) {
+		printk("MY_DEBUG %d", __LINE__);
 		return -ENOSYS;
 	}
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	return api->send_message(transport, chan, msg, use_polling);
 }

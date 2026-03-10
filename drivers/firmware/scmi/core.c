@@ -83,6 +83,8 @@ static int scmi_core_setup_chan(const struct device *transport,
 	 */
 	chan->ready = true;
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
+
 	return 0;
 }
 
@@ -112,6 +114,8 @@ int scmi_send_message(struct scmi_protocol *proto, struct scmi_message *msg,
 		return -EINVAL;
 	}
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);	
+
 	/*
 	 * Force polling mode if:
 	 * 1. Channel requires polling-only operation (e.g., SMC transport), OR
@@ -130,11 +134,15 @@ int scmi_send_message(struct scmi_protocol *proto, struct scmi_message *msg,
 		}
 	}
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
+
 	ret = scmi_transport_send_message(proto->transport, proto->tx, msg, use_polling);
 	if (ret < 0) {
 		LOG_ERR("failed to send message at transport layer: %d", ret);
 		goto out_release_mutex;
 	}
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	ret = scmi_core_wait_reply(proto, use_polling);
 	if (ret < 0) {
@@ -142,16 +150,22 @@ int scmi_send_message(struct scmi_protocol *proto, struct scmi_message *msg,
 		goto out_release_mutex;
 	}
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
+
 	ret = scmi_transport_read_message(proto->transport, proto->tx, reply);
 	if (ret < 0) {
 		LOG_ERR("failed to read message reply: %d", ret);
 		goto out_release_mutex;
 	}
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
+
 out_release_mutex:
 	if (!k_is_pre_kernel()) {
 		k_mutex_unlock(&proto->tx->lock);
 	}
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	return ret;
 }
@@ -161,6 +175,8 @@ static int scmi_core_protocol_negotiate(struct scmi_protocol *proto)
 {
 	uint32_t agent_version, platform_version;
 	int ret;
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	if (!proto) {
 		return -EINVAL;
@@ -192,6 +208,8 @@ static int scmi_core_protocol_negotiate(struct scmi_protocol *proto)
 	LOG_INF("Using protocol 0x%X: agent version 0x%08x, platform version 0x%08x",
 			proto->id, agent_version, platform_version);
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
+
 	return 0;
 }
 
@@ -199,22 +217,36 @@ static int scmi_core_protocol_setup(const struct device *transport)
 {
 	int ret;
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
+
+	printk("MY_DEBUG %p\n", transport);
+
+	if (transport) {
+		printk("MY_DEBUG %s\n", transport->name);
+	}
+
+
 	STRUCT_SECTION_FOREACH(scmi_protocol, it) {
 		it->transport = transport;
+		printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 #ifndef CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS
 		/* no static channel allocation, attempt dynamic binding */
 		it->tx = scmi_transport_request_channel(transport, it->id, true);
+		printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 #endif /* CONFIG_ARM_SCMI_TRANSPORT_HAS_STATIC_CHANNELS */
 
 		if (!it->tx) {
 			return -ENODEV;
 		}
+		printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 		ret = scmi_core_setup_chan(transport, it->tx, true);
 		if (ret < 0) {
 			return ret;
 		}
+
+		printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 		ret = scmi_core_protocol_negotiate(it);
 		if (ret < 0) {
@@ -223,17 +255,23 @@ static int scmi_core_protocol_setup(const struct device *transport)
 
 	}
 
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
+
 	return 0;
 }
 
 int scmi_core_transport_init(const struct device *transport)
 {
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 	int ret;
 
 	ret = scmi_transport_init(transport);
 	if (ret < 0) {
+		printk("MY_DEBUG scmi_transport_init failed");
 		return ret;
 	}
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	return scmi_core_protocol_setup(transport);
 }

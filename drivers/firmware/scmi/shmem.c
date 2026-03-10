@@ -135,9 +135,13 @@ int scmi_shmem_write_message(const struct device *shmem,
 		return -EINVAL;
 	}
 
+	printk("MY_DEBUG %x\n", layout->chan_status);
+
 	if (!(layout->chan_status & SCMI_SHMEM_CHAN_STATUS_BUSY_BIT)) {
-		return -EBUSY;
+		return -EBUSY; // HERE
 	}
+
+	printk("MY_DEBUG %s %d\n", __func__, __LINE__);
 
 	layout->len = sizeof(layout->msg_hdr) + msg->len;
 	layout->msg_hdr = msg->hdr;

@@ -55,7 +55,7 @@ LOG_MODULE_REGISTER(scmi_smc);
                                                                                                    \
 	SCMI_SMC_CHAN_DEFINE(DT_INST(inst, DT_DRV_COMPAT), SCMI_PROTOCOL_BASE, 0)
 
-#define DT_INST_SCMI_SMC_DEFINE(inst, level, prio, api)                                            \
+#define DT_INST_SCMI_SMC_DEFINE(inst, level, prio, api)                                        \
 	DT_INST_SCMI_BASE_CHAN_DEFINE(inst)                                                        \
 	DT_INST_SCMI_TRANSPORT_DEFINE(inst, NULL, NULL, NULL, level, prio, api)
 
