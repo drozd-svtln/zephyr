@@ -38,8 +38,12 @@ static uint8_t *disk_ram_external_map(const struct ram_disk_config * conf)
 {
 	uint8_t *virt_start;
 
+	LOG_WRN("MY_DEBUG %s %d", __func__, __LINE__);
+
 	k_mem_map_phys_bare(&virt_start, POINTER_TO_UINT(conf->buf),
 				conf->size, K_MEM_CACHE_NONE | K_MEM_PERM_USER | K_MEM_DIRECT_MAP);
+
+	LOG_WRN("MY_DEBUG %s %d: 0x%lx %p", __func__, __LINE__, POINTER_TO_UINT(conf->buf), virt_start);
 
 	return virt_start;
 }
@@ -67,13 +71,25 @@ static int disk_ram_access_read(struct disk_info *disk, uint8_t *buff,
 	const struct ram_disk_config *config = dev->config;
 	uint32_t last_sector = sector + count;
 
+	LOG_WRN("MY_DEBUG %s %d", __func__, __LINE__);
+
 	if (last_sector < sector || last_sector > config->sector_count) {
 		LOG_ERR("Sector %" PRIu32 " is outside the range %zu",
 			last_sector, config->sector_count);
 		return -EIO;
 	}
 
+	LOG_WRN("MY_DEBUG %s %d\n %p", __func__, __LINE__, lba_to_address(dev, sector));
+
+	LOG_WRN("MY_DEBUG %s %d\n %lu", __func__, __LINE__, count * config->sector_size);
+
+	volatile uint8_t *ptr = (volatile uint8_t *)lba_to_address(dev, sector);
+
+	LOG_WRN("MY_DEBUG %s %d: %x %x %x", __func__, __LINE__, ptr[0], ptr[1], ptr[2]);
+
 	memcpy(buff, lba_to_address(dev, sector), count * config->sector_size);
+
+	LOG_WRN("MY_DEBUG %s %d", __func__, __LINE__);
 
 	return 0;
 }
@@ -124,12 +140,18 @@ static int disk_ram_access_ioctl(struct disk_info *disk, uint8_t cmd, void *buff
 
 static int disk_ram_access_init(struct disk_info *disk)
 {
+	LOG_WRN("MY_DEBUG %s", __func__);
+
 	return disk_ram_access_ioctl(disk, DISK_IOCTL_CTRL_INIT, NULL);
 }
 
 static int disk_ram_init(const struct device *dev)
 {
+	int ret = 0;
+	LOG_WRN("MY_DEBUG %s %d", __func__, __LINE__);
 	struct disk_info *info = dev->data;
+
+	uint8_t buff[513] = {0};
 
 	info->dev = dev;
 
@@ -137,7 +159,20 @@ static int disk_ram_init(const struct device *dev)
 	const struct ram_disk_config *config = dev->config;
 	ramdisk_buf = disk_ram_external_map(config);
 #endif
-	return disk_access_register(info);
+
+	LOG_WRN("MY_DEBUG %s %d %p", __func__, __LINE__, ramdisk_buf);
+
+	ret = disk_access_register(info);
+
+	LOG_WRN("MY_DEBUG %s %d disk_access_register ret = %d", __func__, __LINE__, ret);
+
+	ret = disk_ram_access_read(info, (uint8_t *)&buff, 0, 1);
+	LOG_WRN("MY_DEBUG %s: %d", __func__, ret);
+	for (int i = 0; i < config->sector_size; i++) {
+		LOG_WRN("MY_DEBUG %s: %d %x", __func__, i, buff[i]);
+	}
+
+	return ret;
 }
 
 static const struct disk_operations ram_disk_ops = {
