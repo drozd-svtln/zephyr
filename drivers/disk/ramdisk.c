@@ -42,8 +42,12 @@ static uint8_t *disk_ram_external_map(const struct ram_disk_config *conf)
 {
 	uint8_t *virt_start;
 
+	LOG_WRN("MY_DEBUG %s %d", __func__, __LINE__);
+
 	k_mem_map_phys_bare(&virt_start, POINTER_TO_UINT(conf->buf),
 				conf->size, K_MEM_CACHE_WB | K_MEM_PERM_RW);
+
+	LOG_WRN("MY_DEBUG %s %d: 0x%lx %p", __func__, __LINE__, POINTER_TO_UINT(conf->buf), virt_start);
 
 	return virt_start;
 }
@@ -77,6 +81,12 @@ static int disk_ram_decompress(char *compressed_buf, size_t compressed_size,
 			LZ4F_getErrorName(ret));
 		return ret;
 	}
+
+	LOG_WRN("MY_DEBUG %s %d: \ndstBuffer: %p \ndstSizePtr: %lu\nsrcBuffer: %p\nsrcSizePtr: %lu",
+		__func__, __LINE__, decompressed_buf, decompressed_size, compressed_buf, compressed_size);
+
+	LOG_WRN("MY_DEBUG %s %d: 0x%02x 0x%02x 0x%02x 0x%02x", 
+		__func__, __LINE__, compressed_buf[0], compressed_buf[1], compressed_buf[2], compressed_buf[3]);
 
 	ret = LZ4F_decompress(lz4_ctx, decompressed_buf, &decompressed_size,
 			      compressed_buf, &compressed_size, NULL);
@@ -200,6 +210,8 @@ static int disk_ram_access_ioctl(struct disk_info *disk, uint8_t cmd, void *buff
 
 static int disk_ram_access_init(struct disk_info *disk)
 {
+	LOG_WRN("MY_DEBUG %s", __func__);
+
 	return disk_ram_access_ioctl(disk, DISK_IOCTL_CTRL_INIT, NULL);
 }
 
@@ -207,6 +219,12 @@ static int disk_ram_init(const struct device *dev)
 {
 	struct ram_disk_data *data = dev->data;
 	struct disk_info *info = data->info;
+
+	int ret = 0;
+
+	LOG_WRN("MY_DEBUG %s %d", __func__, __LINE__);
+
+	uint8_t buff[1025] = {0};
 
 	info->dev = dev;
 
@@ -222,6 +240,7 @@ static int disk_ram_init(const struct device *dev)
 
 #if IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
 	if (disk_ram_is_compressed((char *)data->ramdisk_buf)) {
+		LOG_WRN("MY_DEBUG %s %d", __func__, __LINE__);
 		if (disk_ram_decompress((char *)data->ramdisk_buf, config->size,
 					(char *)config->unpacked_buf, config->size) < 0) {
 			return -EINVAL;
@@ -234,7 +253,25 @@ static int disk_ram_init(const struct device *dev)
 	}
 #endif
 
-	return disk_access_register(info);
+	ret = disk_access_register(info);
+
+	LOG_WRN("MY_DEBUG %s %d disk_access_register ret = %d", __func__, __LINE__, ret);
+
+	ret = disk_ram_access_read(info, (uint8_t *)&buff, 0, 2);
+
+	LOG_WRN("MY_DEBUG %s: disk_ram_access_read ret=%d", __func__, ret);
+	LOG_HEXDUMP_WRN(buff, config->sector_size * 2, "Buff dump");
+
+	// Print all sectors of decompressed randisk
+	// uint8_t sector_count = config->sector_count;
+	uint8_t sector_count = 40;
+	for (int i = 0; i < sector_count; i++) {
+		ret = disk_ram_access_read(info, (uint8_t *)&buff, i, 1);
+		LOG_WRN("\nSector %d", i);
+		LOG_HEXDUMP_WRN(buff, config->sector_size, "");
+	}
+
+	return ret;
 }
 
 static const struct disk_operations ram_disk_ops = {
