@@ -31,11 +31,7 @@
 /**
  * @brief SCMI base protocol revision information
  */
-struct scmi_revision_info {
-	/** Major ABI version. */
-	uint16_t major_ver;
-	/** Minor ABI version. */
-	uint16_t minor_ver;
+struct scmi_platform_info {
 	/** Number of protocols that are implemented, excluding the base protocol. */
 	uint8_t num_protocols;
 	/** Number of agents in the system. */
@@ -64,12 +60,28 @@ struct scmi_agent_info {
 };
 
 /**
- * @brief SCMI base protocol get revision information.
+ * @brief SCMI base protocol get version
  *
- * @param rev pointer on revision information struct scmi_revision_info.
+ * @param version pointer to store version
  * @retval 0 If successful, negative errno on an error.
  */
-int scmi_base_get_revision_info(struct scmi_revision_info *rev);
+int scmi_base_get_version(struct scmi_protocol_version *version);
+
+/**
+ * @brief SCMI base protocol get agents number.
+ *
+ * @param num_agents pointer to store agents number.
+ * @retval 0 If successful, negative errno on an error.
+ */
+int scmi_base_get_num_agents(uint8_t *num_agents);
+
+/**
+ * @brief SCMI base protocol get platform information.
+ *
+ * @param rev pointer on platform information struct scmi_platform_info.
+ * @retval 0 If successful, negative errno on an error.
+ */
+int scmi_base_get_platform_info(struct scmi_platform_info *rev);
 
 /**
  * @brief SCMI base protocol discover the name of an agent and agent id.

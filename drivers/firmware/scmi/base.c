@@ -168,9 +168,42 @@ union scmi_base_msgs_t {
 	struct scmi_msg_base_impl_ver_reply impl_ver;
 };
 
-int scmi_base_get_revision_info(struct scmi_revision_info *rev)
+int scmi_base_get_version(struct scmi_protocol_version *version)
 {
-	struct scmi_protocol_version version;
+	struct scmi_protocol *proto;
+
+	proto = &SCMI_PROTOCOL_NAME(SCMI_PROTOCOL_BASE);
+	if (!proto) {
+		return -EINVAL;
+	}
+
+	return scmi_protocol_get_version(proto, &(version->raw));
+}
+
+int scmi_base_get_num_agents(uint8_t *num_agents)
+{
+	struct scmi_protocol *proto;
+	struct scmi_msg_base_attributes attributes = {0};
+	uint32_t attr_val;
+	int ret;
+
+	proto = &SCMI_PROTOCOL_NAME(SCMI_PROTOCOL_BASE);
+	if (!proto) {
+		return -EINVAL;
+	}
+
+	ret = scmi_protocol_attributes_get(proto, &attr_val);
+	if (ret != 0) {
+		return ret;
+	}
+
+	memcpy(&attributes, &attr_val, sizeof(attributes));
+	*num_agents = attributes.num_agents;
+	return 0;
+}
+
+int scmi_base_get_platform_info(struct scmi_platform_info *rev)
+{
 	union scmi_base_msgs_t msgs;
 	uint32_t attr_val;
 	int ret;
@@ -181,16 +214,6 @@ int scmi_base_get_revision_info(struct scmi_revision_info *rev)
 	if (!proto) {
 		return -EINVAL;
 	}
-
-	ret = scmi_protocol_get_version(proto, &(version.raw));
-	if (ret) {
-		return ret;
-	}
-
-	rev->major_ver = version.major;
-	rev->minor_ver = version.minor;
-
-	LOG_DBG("scmi base protocol v%04x.%04x", rev->major_ver, rev->minor_ver);
 
 	ret = scmi_protocol_attributes_get(proto, &attr_val);
 	if (ret) {
@@ -231,6 +254,8 @@ int scmi_base_get_revision_info(struct scmi_revision_info *rev)
 	if (msgs.impl_ver.status != SCMI_SUCCESS) {
 		return scmi_status_to_errno(msgs.impl_ver.status);
 	}
+
+	rev->impl_ver = msgs.impl_ver.impl_ver;
 
 	LOG_DBG("scmi base revision info vendor '%s:%s' fw version 0x%x protocols:%d agents:%d",
 		rev->vendor_id, rev->sub_vendor_id, rev->impl_ver, rev->num_protocols,
