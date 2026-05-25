@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2026 EPAM Systems
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+        reserved-memory {
+                #address-cells = <2>;
+                #size-cells = <1>;
+                ranges;
+
+                initrd_res: image@17e00000 {
+                    reg = <0x0 0x17e00000 0x11000>; // 512 * 128 = 0x10000; + a couple of additional sectors
+                    label = "ramdisk_storage";
+                };
+        };
+        ramdisk0 {
+                compatible = "zephyr,ram-disk";
+                disk-name = "RAM";
+                sector-size = <512>;
+                sector-count = <128>;
+                ram-region = <&initrd_res>;
+        };
+
+};
+
