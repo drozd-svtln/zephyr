@@ -15,9 +15,14 @@
 
 LOG_MODULE_REGISTER(ramdisk, CONFIG_RAMDISK_LOG_LEVEL);
 
+#if IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
+#include <lz4frame.h>
+#define LZ4_MAGIC 0x184D2204
+#endif
+
 struct ram_disk_data {
 	struct disk_info *info;
-#if defined(CONFIG_MMU)
+#if defined(CONFIG_MMU) || IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
 	uint8_t *ramdisk_buf;
 #endif
 };
@@ -27,6 +32,9 @@ struct ram_disk_config {
 	const size_t sector_count;
 	const size_t size;
 	uint8_t *const buf;
+#if IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
+	uint8_t *unpacked_buf; /* The buffer for decompressing */
+#endif
 };
 
 #if defined(CONFIG_MMU)
@@ -39,12 +47,63 @@ static uint8_t *disk_ram_external_map(const struct ram_disk_config *conf)
 
 	return virt_start;
 }
+
+#if IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
+static void disk_ram_external_unmap(char *virt_start, size_t size)
+{
+	k_mem_unmap_phys_bare(virt_start, size);
+}
+#endif
+#endif
+
+#if IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
+static int disk_ram_is_compressed(char *virt_start)
+{
+	uint32_t magic = *(uint32_t *)virt_start;
+
+	return magic == LZ4_MAGIC;
+}
+
+static int disk_ram_decompress(char *compressed_buf, size_t compressed_size,
+				char *decompressed_buf, size_t decompressed_size)
+{
+	LZ4F_decompressionContext_t lz4_ctx = {0};
+	int final_status;
+	size_t ret;
+
+	ret = LZ4F_createDecompressionContext(&lz4_ctx, LZ4F_VERSION);
+	if (LZ4F_isError(ret)) {
+		LOG_ERR("Can't create decompression context, error: %s\n",
+			LZ4F_getErrorName(ret));
+		return ret;
+	}
+
+	ret = LZ4F_decompress(lz4_ctx, decompressed_buf, &decompressed_size,
+			      compressed_buf, &compressed_size, NULL);
+	if (LZ4F_isError(ret)) {
+		LOG_ERR("Decompression failed: %s\n", LZ4F_getErrorName(ret));
+		goto cleanup;
+	}
+
+	// The frame is not fully decompressed
+	if (ret > 0) {
+		LOG_ERR("Decompression incomplete. Next expected size: %zu\n", ret);
+		final_status = -EMSGSIZE;
+	}
+
+	final_status = 0;
+
+cleanup:
+	LZ4F_freeDecompressionContext(lz4_ctx);
+
+	return final_status;
+}
 #endif
 
 static void *lba_to_address(const struct device *dev, uint32_t lba)
 {
 	const struct ram_disk_config *config = dev->config;
-#if defined(CONFIG_MMU)
+#if defined(CONFIG_MMU) || IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
 	struct ram_disk_data *data = dev->data;
 	uint8_t *ramdisk_buf = data->ramdisk_buf;
 #else
@@ -155,7 +214,26 @@ static int disk_ram_init(const struct device *dev)
 	const struct ram_disk_config *config = dev->config;
 
 	data->ramdisk_buf = disk_ram_external_map(config);
+#elif IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
+	const struct ram_disk_config *config = dev->config;
+
+	data->ramdisk_buf = config->buf;
 #endif
+
+#if IS_ENABLED(CONFIG_DISK_RAM_DECOMPRESS)
+	if (disk_ram_is_compressed((char *)data->ramdisk_buf)) {
+		if (disk_ram_decompress((char *)data->ramdisk_buf, config->size,
+					(char *)config->unpacked_buf, config->size) < 0) {
+			return -EINVAL;
+		}
+#if IS_ENABLED(CONFIG_MMU)
+		LOG_INF("Freeing compressed initrd");
+		disk_ram_external_unmap(data->ramdisk_buf, config->size);
+#endif
+		data->ramdisk_buf = config->unpacked_buf;
+	}
+#endif
+
 	return disk_access_register(info);
 }
 
@@ -178,22 +256,40 @@ static const struct disk_operations ram_disk_ops = {
 		     DT_REG_SIZE(DT_INST_PHANDLE(n, ram_region)),			\
 		     "Disk size is smaller than memory region");			\
 											\
+	COND_CODE_1(CONFIG_DISK_RAM_DECOMPRESS,						\
+		    (static uint8_t unpacked_buf_##n[RAMDISK_DEVICE_SIZE(n)];),		\
+		    ()									\
+	)										\
+											\
 	static struct ram_disk_config disk_config_##n = {				\
 		.sector_size = DT_INST_PROP(n, sector_size),				\
 		.sector_count = DT_INST_PROP(n, sector_count),				\
 		.size = RAMDISK_DEVICE_SIZE(n),						\
 		.buf = UINT_TO_POINTER(DT_REG_ADDR(DT_INST_PHANDLE(n, ram_region))),	\
+		COND_CODE_1(CONFIG_DISK_RAM_DECOMPRESS,					\
+			    (.unpacked_buf = unpacked_buf_##n,),			\
+			    ()								\
+		)									\
 	}
 
 #define RAMDISK_DEVICE_CONFIG_DEFINE_LOCAL(n)						\
 	static uint8_t disk_buf_##n[DT_INST_PROP(n, sector_size) *			\
 				    DT_INST_PROP(n, sector_count)];			\
 											\
+	COND_CODE_1(CONFIG_DISK_RAM_DECOMPRESS,						\
+		    (static uint8_t unpacked_buf_##n[RAMDISK_DEVICE_SIZE(n)];),		\
+		    ()									\
+	)										\
+											\
 	static struct ram_disk_config disk_config_##n = {				\
 		.sector_size = DT_INST_PROP(n, sector_size),				\
 		.sector_count = DT_INST_PROP(n, sector_count),				\
 		.size = RAMDISK_DEVICE_SIZE(n),						\
 		.buf = disk_buf_##n,							\
+		COND_CODE_1(CONFIG_DISK_RAM_DECOMPRESS,					\
+			    (.unpacked_buf = unpacked_buf_##n,),			\
+			    ()								\
+		)									\
 	}
 
 #define RAMDISK_DEVICE_CONFIG_DEFINE(n)							\

@@ -12,6 +12,12 @@ config DISK_DRIVER_RAM
 
 if DISK_DRIVER_RAM
 
+config DISK_RAM_DECOMPRESS
+	bool "Decompress the initrd"
+	depends on LZ4
+	help
+	  Decompress the initrd before using it as the RAM Disk.
+
 module = RAMDISK
 module-str = ramdisk
 source "subsys/logging/Kconfig.template.log_config"
