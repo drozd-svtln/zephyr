@@ -323,6 +323,10 @@ manifest:
     - name: lvgl
       revision: bbedf2656086a93a8468a1c98168a6b36631ce9a
       path: modules/lib/gui/lvgl
+    - name: lz4
+      url: https://github.com/zephyrproject-rtos/lz4
+      revision: zephyr
+      path: modules/lib/lz4
     - name: mbedtls
       revision: 554163f6f7b2ec71fed9b423e81f2217a8615d29
       path: modules/crypto/mbedtls
