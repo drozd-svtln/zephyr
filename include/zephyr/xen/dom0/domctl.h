@@ -288,4 +288,7 @@ int xen_domctl_destroydomain(int domid);
  */
 int xen_domctl_getvcpu(int domid, uint32_t vcpu, struct xen_domctl_getvcpuinfo *info);
 
+
+int xen_domctl_irq_permission(int domid, uint32_t pirq, uint8_t allow_access);
+
 #endif /* __XEN_DOM0_DOMCTL_H__ */
