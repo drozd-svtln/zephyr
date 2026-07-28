@@ -351,3 +351,18 @@ int xen_domctl_getvcpu(int domid, uint32_t vcpu, struct xen_domctl_getvcpuinfo *
 
 	return ret;
 }
+
+int xen_domctl_irq_permission(int domid, uint32_t pirq, uint8_t allow_access)
+{
+    xen_domctl_t domctl = {
+        .cmd = XEN_DOMCTL_irq_permission,
+        .domain = domid,
+        .u.irq_permission = {
+            .pirq = pirq,
+            .allow_access = allow_access,
+            /* pad[3] is automatically zero-filled */
+        },
+    };
+
+    return do_domctl(&domctl);
+}
